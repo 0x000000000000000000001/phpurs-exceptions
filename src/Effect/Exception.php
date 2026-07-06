@@ -1,18 +1,27 @@
 <?php
 
-$Effect_Exception_error = function($msg) { return new \Exception($msg); };
-$Effect_Exception_message = function($e) { return $e->getMessage(); };
-$Effect_Exception_name = function($e) { return get_class($e); };
-$Effect_Exception_stackImpl = function($just) { return function($nothing) { return function($e) use(&$just, &$nothing) { return $just($e->getTraceAsString()); }; }; };
-$Effect_Exception_throwException = function($e) { return function() use(&$e) { throw $e; }; };
-$Effect_Exception_catchException = function($c, $t = null) {
+$error = function($msg) use (&$error) { return new \Exception($msg); };
+$message = function($e) use (&$message) { return $e->getMessage(); };
+$name = function($e) use (&$name) { return get_class($e); };
+$stackImpl = function($just) use (&$stackImpl) { return function($nothing) { return function($e) use(&$just, &$nothing) { return $just($e->getTraceAsString()); }; }; };
+$throwException = function($e) use (&$throwException) { return function() use(&$e) { throw $e; }; };
+$catchException = function($c, $t = null) use (&$catchException) {
     if (func_num_args() < 2) {
         $__args = func_get_args();
-        return function(...$more) use ($__args) {
-            global $Effect_Exception_catchException;
-            return $Effect_Exception_catchException(...array_merge($__args, $more));
+        return function(...$more) use ($__args, &$error) {
+
+            return $catchException(...array_merge($__args, $more));
         };
     }
     return function() use(&$c, &$t) { try { return $t(); } catch (\Throwable $e) { return $c($e)(); } };
 };
-$Effect_Exception_showErrorImpl = function($e) { return (string)$e; };
+$showErrorImpl = function($e) use (&$showErrorImpl) { return (string)$e; };
+
+$exports['error'] = $error;
+$exports['message'] = $message;
+$exports['name'] = $name;
+$exports['stackImpl'] = $stackImpl;
+$exports['throwException'] = $throwException;
+$exports['catchException'] = $catchException;
+$exports['showErrorImpl'] = $showErrorImpl;
+return $exports;
