@@ -8,7 +8,7 @@ $throwException = function($e) use (&$throwException) { return function() use(&$
 $catchException = function($c, $t = null) use (&$catchException) {
     if (func_num_args() < 2) {
         $__args = func_get_args();
-        return function(...$more) use ($__args, &$error) {
+        return function(...$more) use ($__args, &$catchException) {
 
             return $catchException(...array_merge($__args, $more));
         };
