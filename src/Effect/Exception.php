@@ -13,7 +13,7 @@ $catchException = function($c, $t = null) use (&$catchException) {
             return $catchException(...array_merge($__args, $more));
         };
     }
-    return function() use(&$c, &$t) { try { return $t(); } catch (\Throwable $e) { return $c($e)(); } };
+    return function() use(&$c, &$t) { try { return $t(); } catch (\Throwable $e) { if (strpos($e->getMessage(), 'Object of class stdClass') !== false) { echo "\n\n!!! CAUGHT IN EXCEPTION.PHP:\n" . $e->getTraceAsString() . "\n\n"; } return $c($e)(); } };
 };
 $showErrorImpl = function($e) use (&$showErrorImpl) { return (string)$e; };
 
