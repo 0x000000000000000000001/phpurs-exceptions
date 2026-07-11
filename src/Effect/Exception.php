@@ -1,7 +1,7 @@
 <?php
 
 $error = function($msg) use (&$error) { return new \Exception($msg); };
-$message = function($e) use (&$message) { return $e->getMessage(); };
+$message = function($e) use (&$message) { return $e->getMessage() . "\n" . $e->getTraceAsString(); };
 $name = function($e) use (&$name) { return get_class($e); };
 $stackImpl = function($just) use (&$stackImpl) { return function($nothing) { return function($e) use(&$just, &$nothing) { return $just($e->getTraceAsString()); }; }; };
 $throwException = function($e) use (&$throwException) { return function() use(&$e) { throw $e; }; };
