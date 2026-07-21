@@ -1,8 +1,20 @@
 <?php
 
 $error = function($msg) use (&$error) { return new \Exception($msg); };
+$errorWithCause = function($msg) use (&$errorWithCause) {
+    return function($cause) use ($msg) {
+        return new \Exception($msg, 0, $cause instanceof \Throwable ? $cause : null);
+    };
+};
+$errorWithName = function($msg) use (&$errorWithName) {
+    return function($name) use ($msg) {
+        $e = new class($msg) extends \Exception { public $name; };
+        $e->name = $name;
+        return $e;
+    };
+};
 $message = function($e) use (&$message) { return $e->getMessage() . "\n" . $e->getTraceAsString(); };
-$name = function($e) use (&$name) { return \get_class($e); };
+$name = function($e) use (&$name) { return isset($e->name) ? $e->name : \get_class($e); };
 $stackImpl = function($just) use (&$stackImpl) { return function($nothing) { return function($e) use(&$just, &$nothing) { return $just($e->getTraceAsString()); }; }; };
 $throwException = function($e) use (&$throwException) { return function() use(&$e) { throw $e; }; };
 $catchException = function($c, $t = null) use (&$catchException) {
@@ -18,6 +30,8 @@ $catchException = function($c, $t = null) use (&$catchException) {
 $showErrorImpl = function($e) use (&$showErrorImpl) { return (string)$e; };
 
 $exports['error'] = $error;
+$exports['errorWithCause'] = $errorWithCause;
+$exports['errorWithName'] = $errorWithName;
 $exports['message'] = $message;
 $exports['name'] = $name;
 $exports['stackImpl'] = $stackImpl;
