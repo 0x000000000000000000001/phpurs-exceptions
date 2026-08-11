@@ -9,7 +9,7 @@ $errorWithName = function($msg, $name) {
     $e->name = $name;
     return $e;
 };
-$message = function($e) { return $e->getMessage() . "\n" . $e->getTraceAsString(); };
+$message = function($e) { return $e->getMessage(); };
 $name = function($e) { return isset($e->name) ? $e->name : \get_class($e); };
 $stackImpl = function($just, $nothing, $e) { return $just($e->getTraceAsString()); };
 $throwException = function($e) { return function() use($e) { throw $e; }; };
