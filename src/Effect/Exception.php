@@ -1,22 +1,44 @@
 <?php
 
-$error = function($msg) { return new \Exception($msg); };
-$errorWithCause = function($msg, $cause) {
+$error = function ($msg) {
+    return new \Exception($msg);
+};
+$errorWithCause = function ($msg, $cause) {
     return new \Exception($msg, 0, $cause instanceof \Throwable ? $cause : null);
 };
-$errorWithName = function($msg, $name) {
-    $e = new class($msg) extends \Exception { public $name; };
+$errorWithName = function ($msg, $name) {
+    $e = new class ($msg) extends \Exception {
+        public $name;
+    };
     $e->name = $name;
     return $e;
 };
-$message = function($e) { return $e->getMessage(); };
-$name = function($e) { return isset($e->name) ? $e->name : \get_class($e); };
-$stackImpl = function($just, $nothing, $e) { return $just($e->getTraceAsString()); };
-$throwException = function($e) { return function() use($e) { throw $e; }; };
-$catchException = function($c, $t) use (&$catchException) {
-    return function() use($c, $t) { try { return $t(); } catch (\Throwable $e) { return $c($e)(); } };
+$message = function ($e) {
+    return $e->getMessage();
 };
-$showErrorImpl = function($e) { return (string)$e; };
+$name = function ($e) {
+    return isset($e->name) ? $e->name : \get_class($e);
+};
+$stackImpl = function ($just, $nothing, $e) {
+    return $just($e->getTraceAsString());
+};
+$throwException = function ($e) {
+    return function () use ($e) {
+        throw $e;
+    };
+};
+$catchException = function ($c, $t) {
+    return function () use ($c, $t) {
+        try {
+            return $t();
+        } catch (\Throwable $e) {
+            return $c($e)();
+        }
+    };
+};
+$showErrorImpl = function ($e) {
+    return (string) $e;
+};
 
 $exports['error'] = $error;
 $exports['errorWithCause'] = $errorWithCause;
